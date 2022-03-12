@@ -1,0 +1,358 @@
+#============================================#
+# Raspberry Pi Guides - Installing ArchLinux #
+#============================================#
+
+Table of Contents:
+	References
+	0. Pre-Requisites
+	1. Setup SD Card
+	2. Install ArchLinuxARM
+	3. Setup Raspberry Pi
+
+References:
+	- Install Arch Linux (ARM) on Raspberry Pi B+ : https://gist.github.com/theramiyer/cb2b406128e54faa12c37e1a01f7ae15
+	
+#===================
+# 0. Pre-Requisites
+#===================
+
+1. Get ArchLinux ARM download URL for device of your choice: https://archlinuxarm.org/about/downloads
+
+2. Partition Design:
+	Device Name : {/dev/sdX}
+	Device Label : {msdos|gpt}
+	Partition Schema:
+	==========================================================================================
+	ROW_ID, partition_name, mount_path, partition_format, partition_type, start_size, end_size, other_opts
+	==========================================================================================
+	1, /dev/sdX1, /mnt/boot, primary, ext4, 0%, 1024MiB, Bootable
+	2, /dev/sdX2, /mnt/root, primary, ext4, 1024MiB, 32768MiB
+	3, /dev/sdX3, /mnt/home, primary, ext4, 32768MiB, 100%
+
+#==================
+# 1. Setup SD Card
+#==================
+```
+NOTE:
+	- I am using parted in these examples for fast and easy formatting
+		- you can use fdisk (for example) if you are better with those
+```
+
+- (OPTIONAL) Format Drive
+	```
+	Syntax: sudo parted {device_name} mklabel {msdos | gpt}
+	```
+	sudo parted /dev/sdX mklabel msdos
+
+- Create Partitions
+	```
+	Syntax: sudo parted {device_name} mkpart {
+	```
+	sudo parted /dev/sdX mkpart primary ext4 0% 1024MiB
+	sudo parted /dev/sdX mkpart primary ext4 1024MiB 32768MiB
+	sudo parted /dev/sdX mkpart primary ext4 32768MiB 100%
+
+
+- Format Created Partitions
+	```
+	Syntax: 
+		sudo mkfs.{partition_type} {others} {device_name}{partition_number}
+	Options:
+		If partition type is
+			fat16 : -f 16
+			fat32 : -f 32
+	```
+	sudo mkfs.ext4 /dev/sdX1
+	sudo mkfs.ext4 /dev/sdX2
+	sudo mkfs.ext4 /dev/sdX3
+
+- Mount Root Directory
+	```
+	Syntax: mount {device_name}{partition_number} {mount_path}
+	```
+	mount /dev/sdX2 /mnt/root
+	
+- Created other mount directories
+	```
+	Syntax: mkdir -p [directories]
+	```
+	mkdir -p /mnt/boot /mnt/home
+
+- Mount Created Directories
+	```
+	Syntax: mount {device_name}{partition_number} {mount_path}
+	```
+	mount /dev/sdX1 /mnt/boot
+	mount /dev/sdX3 /mnt/home
+
+- Generate File Systems Table
+	```
+	- Create File Systems Table (Fstab) for partitions and devices to load on startup and mount automatically
+	```
+	Automatic:
+		```
+		- using genfstab
+			- Pre-Requisites: Install 'arch-install-scripts' for genfstab
+				If Host System is 
+					ArchLinux (pacman):
+						sudo pacman -S arch-install-scripts
+					Debian (aptitude):
+						sudo apt install arch-install-scripts
+
+			Syntax: genfstab -U {mount_path} | sudo tee -a {mount_path}/etc/fstab
+		```
+		genfstab -U /mnt | sudo tee -a /mnt/root/etc/fstab
+		
+
+	Manual:
+		```
+
+		```
+
+#=========================
+# 2. Install ArchLinuxARM
+#=========================
+
+- Download ArchLinux ARM tar file
+	```
+	Please refer to [0.1] beforehand and get the URL for your tarfile
+	```
+	- Using wget
+		```
+		Syntax: wget {download_url}
+		```
+		wget https://archlinuxarm.org/os/ArchLinuxARM-[architecture]-latest.tar.gz
+
+	- Using curl
+		```
+		Syntax: curl -L -O {download_url} {output_file}
+		```
+		curl -L -O https://archlinuxarm.org/os/ArchLinuxARM-[architecture]-latest.tar.gz
+
+- Unzip contents of zip file to mounted root directory
+	```
+	Syntax: sudo tar -xpf [tar_file] -C [root_mount_path]
+	```
+	sudo tar -xpf ArchLinuxARM-[architecture]-latest.tar.gz -C /mnt/root/
+	sync
+
+- Move contents of the [extracted root mount path in the boot directory] to the boot partition
+	```
+	Syntax: sudo mv [root_mount_path]/boot/* [boot_partition]
+	```
+	sudo mv /mnt/root/boot/* /mnt/boot
+
+- Unmount partitions from your file system
+	```
+	Syntax: sudo umount {mounts}
+	```
+	sudo umount /mnt/boot /mnt/root /mnt/home
+
+#=======================
+# 3. Setup Raspberry Pi
+#=======================
+```
+	- Insert the SD card into the Pi 
+	- connect a keyboard and a mouse 
+	- Connect the Pi to a display using the HDMI port
+	- connect the ethernet cable. 
+	- Finally, plug in the power supply.
+```
+
+- Login to device
+	```
+	Username: root
+	Password: root
+	```
+
+- Change Root Password
+	```
+	Syntax: passwd [username]
+	Parameters:
+		username : The user you want to change password
+			Default: Change root password
+	```
+	passwd
+
+- Connect to WiFi (in case you dont use Ethernet)
+	- Create Wifi config file
+		```
+		- Change directory to folder [/etc/wpa_supplicant]
+		- Create a new file called anything of your choice
+			- let file be [home-network]
+		- Enter into the file
+			network={
+				ssid="YOURSSID"
+				psk="YOURWIFIPASSWORD"
+			}
+		```
+		cd /etc/wpa_supplicant
+		echo "network={
+			ssid=\"YOURSSID\"
+			psk=\"YOURWIFIPASSWORD\"
+		} >> home-network
+
+	- Connect to WiFi
+		```
+		Connect wifi (wpa_supplicant) to an existing wifi config file in /etc/wpa_supplicant
+		Syntax: wpa_supplicant -i [wifi_device] /etc/wpa_supplicant/[wifi_config_file] &
+		NOTE:
+			& : Run wifi connection in the background (Autoconnect)
+		```
+		wpa_supplicant -i wlan0 /etc/wpa_supplicant/home-network &
+
+	- Get DHCP address
+		```
+		Syntax: dhcpcd [wifi_device]
+		```
+		dhcpcd wlan0
+
+	- Test Network
+		ping 8.8.8.8 -c 5
+
+#====================
+# Post-Installations
+#====================
+
+- Install Essential Packages
+	```
+	Packages:
+		sudo	
+		vim
+		base-devel
+		wget
+		git
+		nfs-utils : Network File System Utilities
+		htop : Monitoring Tool
+		openssh : For SSH
+		autofs : Automatic File System Utility
+		alsa-utils : Audio utility
+		alsa-firmware
+		alsa-lib
+		alsa-plugins
+		zsh : Shell
+		binutils
+		diffutils
+		libnewt
+		dialog
+		wpa_supplicant
+		wireless_tools
+		iw
+		crda
+		lshw
+		blueman : Bluetooth Manager
+	Syntax: sudo pacman -S [package_name]
+	```
+	pacman -S sudo vim
+
+- Enable Sudo
+	```
+	File: /etc/sudoers
+	```
+	- Automatic (via Terminal command)
+		sed -i 's/^#\s*\(%wheel\s*ALL=(ALL:ALL)\s*ALL\)/\1/' /etc/sudoers
+
+	- Manual
+		visudo
+		> Uncomment the line '%wheel ALL=(ALL:ALL) ALL"
+		> Save
+
+- (OPTIONAL) Setup SSH
+
+- (OPTIONAL) Setup pacman
+	```
+	Pacman Config : /etc/pacman.conf
+	```
+	- Add color to pacman
+		```
+		sed -i 's/#Color/Color/' /etc/pacman.conf
+
+		#Color 
+		```
+		sed -i 's/#Color/Color/' /etc/pacman.conf
+	
+	- Initialize pacman
+		pacman-key --init
+		pacman-key --populate archlinuxarm
+		pacman -Sy pacman
+		pacman -S archlinux-keyring
+
+	- Update system
+		pacman -Syu
+
+	- Reboot raspberry pi
+		sudo reboot now
+
+
+- (OPTIONAL) Setup Swapfile
+	- Create /swapfile of size (n)
+		```
+		Syntax: fallocate -l [size] /swapfile
+		Parameters:
+			size : Size of swapfile
+				- n(KiB|MiB|GiB)
+				NOTE: 
+					- Recommend to create a swapfile about 2x your physical RAM
+		```
+		fallocate -l 8GiB /swapfile
+	- Change Permission of swapfile to 600
+		```
+		Syntax: chmod [permission_number] /swapfile
+		```
+		chmod 600 /swapfile
+
+	- Make swapfile to swapfile type
+		mkswap /swapfile
+
+	- Activate and turn on swapfile
+		swapon /swapfile
+
+	- Write swapfile into File Systems Table (fstab)
+		```
+		- for swapfile to mount automatically on startup
+		```
+		echo "# /swapfile" >> /etc/fstab
+		echo "/swapfile none swap defaults 0 0" >> /etc/fstab
+
+
+- (OPTIONAL) User Setup
+	```
+	Right out of the box, Arch Linux ARM comes with two users: root and alarm. 
+		- The first thing we would want to do is reset the password for root, 
+			and then, 
+		- either create a new user to replace alarm, or reset the password for alarm
+	```
+	- Create User and add into group
+		```
+		Syntax: useradd -m -g [primary-group] -G [secondary-groups] -d [home-directory] -s [shell] {username}
+		```
+		useradd -m -g wheel -d /home/profiles/user -s /bin/bash user
+
+	- Change user password
+		```
+		Syntax: passwd [username]
+		Parameters:
+			username : The user you want to change password
+				Default: Change root password
+		```
+		passwd user
+
+
+	- Verify User
+		- Switch to user
+			```
+			Syntax: su - {username}
+			```
+			su - user
+
+		- Check if can use sudo
+			```
+			- Result should be 'root'
+			```
+			sudo whoami
+
+	- (OPTIONAL) Delete user 'alarm'
+		- userdel alarm
+
+
+

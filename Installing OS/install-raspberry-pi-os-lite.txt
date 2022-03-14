@@ -1,0 +1,136 @@
+#=======================================================#
+# Raspberry Pi Guides - Installing Raspberry Pi OS Lite #
+#=======================================================#
+
+Table of Contents:
+	References
+	0. Pre-Requisites
+	1. Post-Installations
+
+References:
+	- Setup:
+		Window Managers:
+			BSPWM / SXHKD : https://www.instructables.com/Bspwm-Installation-and-Configuration/
+	- Post Installation : 
+		Raspberry Pi Top apps to install : https://www.makeuseof.com/tag/top-apps-install-raspberry-pi/
+
+#===================
+# 0. Pre-Requisites
+#===================
+- Choose a Display Server (X11 | Wayland)
+	```
+	In Linux, a display server is used to render a desktop environment or a window manager
+	- To display Graphical environments (GUI)
+	```
+	- Select a Desktop Environment (aka Desktop - DE) / Window Manager (WM)
+		- Desktop Environments:
+			KDE
+			GNOME
+			LXDE
+			Deepin
+			XFCE
+		- Window Managers
+			X11
+				AwesomeWM
+				BSPWM
+				DWM
+				i3{-gap}
+				Qtile
+			Wayland
+				Sway
+
+- (OPTIONAL) Choose a Login Manager (aka Display Manager)
+	```
+	You can ignore this if you are using terminal startup login (startx/sx)
+	```
+	- LoginDM
+	- gdm
+	- sddm
+
+- Essential Packages List
+	```
+	Specify all essential packages here to be download
+	- For easy reference
+	```
+	vim		# Editor
+	conky		# Monitoring Tool
+	picom		# Compositor
+	terminator	# Terminal Emulator
+
+#=======================
+# 1. Post-Installations
+#=======================
+- Install Desktop Environment / Window Manager
+	- Desktop Environments
+		- KDE
+			sudo apt-get install kde-plasma
+	- Window Managers
+		- bspwm
+			via Apt:
+				# Install bspwm
+					sudo apt-get install bspwm
+				# Install sxhkd
+					sudo apt-get install sxhkd
+			via Manual:
+				```
+				NOTE:
+					- With this method, you might need to install additional dependencies or have missing libraries you need to download seperately
+						References: https://askubuntu.com/questions/392718/problems-installing-bspwm
+						- Install package [apt-file]
+							# This program will find the relevant package for the library
+							sudo apt-get install apt-file
+
+							# Update after finding
+							sudo apt-file update
+							Syntax: apt-file search "library_header_fullname"
+							Usage: 
+								apt-file search "X11/extensions/Xinerama.h"
+
+							# Install returned package
+				```
+				# Clone Make and Install bspwm
+					git clone https://github.com/baskerville/bspwm.git
+					make && sudo make install
+				# Clone, Make and Install sxhkd
+					git clone https://github.com/baskerville/sxhkd.git
+					make && sudo make install	
+	
+- Setup Configs
+	- Desktop Environments / Window Managers
+		- Window Managers
+			- bspwm
+				```
+				Steps:
+					1. Make Directories [~/.config/bspwm, ~/.config/sxhkd]
+					2. Copy bspwmrc and sxhkdrc examples to ~/.config/bspwm and ~/.config/sxhkd
+					3. Change permissions of bspwmrc and sxhkdrc to Executable for use
+				```
+				# 1. Make Directories [~/.config/bspwm, ~/.config/sxhkd]
+					mkdir -p ~/.config/bspwm ~/.config/sxhkd
+				# 2. Copy bspwmrc and sxhkdrc examples to ~/.config/bspwm and ~/.config/sxhkd
+					cp bspwm/examples/bspwmrc ~/.config/bspwm/bspwmrc
+					cp sxhkd/examples/background_shell/sxhkdrc ~/.config/sxhkd/sxhkdrc
+				# 3. Change permissions of bspwmrc and sxhkdrc to Executable for use
+					chmod +x ~/.config/bspwm/bspwmrc
+					chmod +x ~/.config/sxhkd/sxhkdrc
+
+
+
+- (OPTIONAL) Setup xinitrc (if using startx - no display manager)
+	```
+	The '.xinitrc' dotfile is the X initialization Resource Control file
+	- Used alongside startx as a settings file to know what to run when passed
+	
+	Syntax: startx ~/.xinitrc {params}
+	```
+	echo "exec [wm | de]" >> ~/.xinitrc
+
+
+- Install Essential Packages
+	```
+	Please refer to the Essential Packages List
+	```
+	sudo apt-get install ${list[@]}
+
+
+

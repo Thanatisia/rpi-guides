@@ -11,5 +11,6 @@ Repository containing Raspberry Pi guides + tips n tricks for general references
 
 ## Files
 - Installing OS
-	- [ArchLinux Installation](install-archlinux.txt)
+	- [ArchLinux Installation](Installing%20OS/install-archlinux.txt)
+	- [Raspberry Pi OS Lite](Installing%20OS/install-raspberry-pi-os-lite.txt)
 

@@ -46,7 +46,7 @@ NOTE:
 
 - Create Partitions
 	```
-	Syntax: sudo parted {device_name} mkpart {
+	Syntax: sudo parted {device_name} mkpart {options}
 	```
 	sudo parted /dev/sdX mkpart primary ext4 0% 1024MiB
 	sudo parted /dev/sdX mkpart primary ext4 1024MiB 32768MiB

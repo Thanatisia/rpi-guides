@@ -51,15 +51,31 @@ References:
 	```
 	Specify all essential packages here to be download
 	- For easy reference
+
+	- Please refer to the page 'packages-list' for a full list of packages and
+		- Choose one to specify inside here
 	```
+	chromium	# Web Browser
 	vim		# Editor
 	conky		# Monitoring Tool
 	picom		# Compositor
 	terminator	# Terminal Emulator
+	rxvt-unicode	# Terminal Emulator; aka URXVT
 
 #=======================
 # 1. Post-Installations
 #=======================
+- Setup Localization
+	- Keyboard
+		```
+		Default Layout: English (UK)
+		- You must explicitly change the layout from English (UK) -> English (US)
+
+		Syntax: sudo raspi-config
+		Examples:
+			English (US) : Localization > Keyboard Layout > English (US)
+		```
+
 - Install Desktop Environment / Window Manager
 	- Desktop Environments
 		- KDE
@@ -109,7 +125,7 @@ References:
 					mkdir -p ~/.config/bspwm ~/.config/sxhkd
 				# 2. Copy bspwmrc and sxhkdrc examples to ~/.config/bspwm and ~/.config/sxhkd
 					cp bspwm/examples/bspwmrc ~/.config/bspwm/bspwmrc
-					cp sxhkd/examples/background_shell/sxhkdrc ~/.config/sxhkd/sxhkdrc
+					cp bspwm/examples/sxhkdrc ~/.config/sxhkd/sxhkdrc
 				# 3. Change permissions of bspwmrc and sxhkdrc to Executable for use
 					chmod +x ~/.config/bspwm/bspwmrc
 					chmod +x ~/.config/sxhkd/sxhkdrc
@@ -121,9 +137,43 @@ References:
 	The '.xinitrc' dotfile is the X initialization Resource Control file
 	- Used alongside startx as a settings file to know what to run when passed
 	
-	Syntax: startx ~/.xinitrc {params}
+	Contents:
+		exec [wm/de]
+	Syntax: 
+		To start session with startx : startx ~/.xinitrc {params}
+
+	File: ~/.xinitrc
+	Notes:
+		- Ensure that you place '#!/bin/bash' at the top to force the script to run with bash
+			OR
+			- Change default shell to bash
+
+	- Recommended Contents:
+		[1] Associative Array
+			DEFAULT_ENV="bspwm"
+			declare -a list_of_env=(
+				# Key : Name of Window Manager/Desktop Environment
+				# Value : command to start the exec and its parameters
+				# Syntax: [wm/de]="command"
+				[bspwm]="bspwm"
+			)
+			SESSION="${1:-$DEFAULT_ENV}"
+			exec ${list_of_env["$SESSION"]}
+
+		[2] Case
+			DEFAULT_ENV="bspwm"
+			SESSION="${1:-$DEFAULT_ENV}
+			case "$SESSION" in
+				"bspwm")
+					exec bspwm
+					;;
+				*)
+					# Default
+					echo "Invalid Environment"
+					;;
+			esac
 	```
-	echo "exec [wm | de]" >> ~/.xinitrc
+	
 
 
 - Install Essential Packages

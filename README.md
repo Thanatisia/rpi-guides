@@ -7,10 +7,12 @@ Repository containing Raspberry Pi guides + tips n tricks for general references
 	- Files
 
 ## Folders
-- [Guide - Installing OS](Installing%20OS)
+- [Guide - Installing OS](#installing-os)
+- [Guide - Utilities](#utilities)
 
 ## Files
-- Installing OS
+- [Docs](Docs)
+- [Installing OS](Installing%20OS)
 	- [ArchLinux Installation](Installing%20OS/install-archlinux.txt)
 	- [Raspberry Pi OS Lite](Installing%20OS/install-raspberry-pi-os-lite.txt)
-
+- [Utilities](Utilities)

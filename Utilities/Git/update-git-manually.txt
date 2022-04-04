@@ -1,0 +1,76 @@
+#=======================================#
+# Raspberry Pi Guides - Utilities - Git #
+#            Manually Update            #
+#=======================================#
+
+Table of Contents:
+	* Basic Information
+	* Pre-Requisites
+	* Download
+	* Compilation
+
+Basic Information:
+	- Check if your git version is the latest version
+		git --version
+
+	- If your latest version of Git is < the actual latest version
+		manually compile the Git package from source
+
+Pre-Requisites:
+	- Update and Upgrade Aptitude
+		sudo apt update && sudo apt upgrade
+
+	- Install packages
+		make
+		autoconf
+		libssl-dev
+		libghc-zlib-dev
+		libcurl4-gnutls-dev
+		libexpat1-dev
+		gettext
+	
+Download:
+	- Change directory to temporary (/tmp)
+		```
+		Downloading to temporary allows you to work with it and have it destroyed on restart/shutdown
+		- Download it elsewhere if you would like to keep the folder
+		```
+		cd /tmp
+
+	- Download from Source
+		```
+		Repository: https://github.com/git/git/archive/refs/tags/<latest_version>.tar.gz
+		```
+		- via wget
+			```
+			Syntax: wget https://github.com/git/git/archive/refs/tags/filename
+			- Let latest version be: v2.35.0
+			```
+			wget https://github.com/git/git/archive/refs/tags/v2.35.0.tar.gz
+
+	- Extract File
+		```
+		Syntax: tar -xvzf <filename>
+		```
+		tar -xvzf v2.35.0.tar.gz
+
+	- Change directory into source file
+		cd git-2.35.0
+
+Compilation:
+	- Make configuration file
+		make configure
+
+	- Configure and output to --prefix
+		./configure --prefix=/usr/local
+
+	- Make and compile all sources 
+		make all
+
+	- Install all compiled sources
+		sudo make install
+
+Verify:
+	- Git version
+		git --version
+

@@ -1,0 +1,121 @@
+# Raspberry Pi - IPSEC VPN Server Setup Guide
+
+## Table of Contents
+* References
+* Content Page
+* Steps
+
+## References
+* https://www.stewright.me/2018/07/create-a-raspberry-pi-vpn-server-using-l2tpipsec/
+
+## Content Page
+1. (OPTIONAL) Clean installation of Raspberry Pi OS
+2. Securing your Raspberry Pi
+3. Install the VPN Server on your Raspberry Pi
+4. Port-Forward the Raspberry Pi IPSEC VPN Server/Router
+5. Connect to your VPN
+
+## Steps
+1. (OPTIONAL) Clean installation of Raspberry Pi OS
+
+2. Securing your Raspberry Pi
+
+- If your OS is:
+	> Raspberry Pi OS
+		sudo raspi-config
+		```
+		Steps
+		```
+		1. Change User Password
+		2. Enable SSH	
+			* Choose 'Interfacing Options'
+			* 'Enable/Disable SSH'
+			* Choose 'Yes'
+		
+
+	> ArchLinux ARM
+		
+	
+
+3. Install the VPN Server on your Raspberry Pi
+
+- Prepare & Setup VPN Server with Randomly Generated Password
+	```
+	Script URL: git.io/vpnsetup
+	Author: hwdsl2	
+	```
+
+	- Download and Execute VPNSetup script
+		- Automatic
+			```
+			Allow script to generate you a password and PSK
+			```
+			wget https://git.io/vpnsetup -O vpnsetup.sh && sudo sh vpnsetup.sh
+
+			# Wait for installation to complete
+			# Note down your PSK
+
+		- Setting up your own username and password
+			> Download the script (No Execute)
+				wget https://git.io/vpnsetup -O vpnsetup.sh
+
+			> Edit the file
+				$EDITOR vpnsetup.sh
+
+			> Scroll down to the following lines and set your desired settings
+				```
+				PSK: You can generate one using RandomKeygen
+
+				Content : YOUR_IPSEC_PSK='' YOUR_USERNAME='' YOUR_PASSWORD=''
+				```
+
+			> Execute Script
+				sudo ./vpnsetup.sh
+
+4. Port-Forward the Raspberry Pi IPSEC VPN Server/Router
+
+	- Go into your router's default gateway
+		```
+		Different depend
+		```
+	
+	- Find the Raspberry Pi/IPSEC VPN Server
+		> Note the following
+			* Device Name
+			* Device IP Address
+
+	- Add a new Firewall Rule
+		- Protocol : UDP
+			- Add external port 
+				* Start : 500
+				* End : 500
+			- Add Internal port
+				* Start : 500
+				* End : 500
+
+		- Protocol : UDP
+			- Add external port
+				* Start : 4500
+				* End : 4500
+			- Add Internal port
+				* Start : 4500
+				* End : 4500
+
+5. Connect to your VPN
+
+- Windows 10
+	> Go to 'Network & Internet'
+
+	> Select 'VPN' and click 'Add a VPN Connection'
+
+	> Enter the following details
+		VPN Provider : Windows (built-in)
+		Connection Name : <your-connection-name>
+		Server Name or Address : <IP-Address-of-RaspberryPi>
+		VPN Type : L2TP/IPsec with pre-shared key
+		Pre-Shared Key : <your-PSK>
+		Type of sign-in info: Username & Password
+		Username (Optional) : <username-of-vpnsetup>
+		Password (Optional) : <password-of-vpnsetup>
+
+	> Click Save and try connecting

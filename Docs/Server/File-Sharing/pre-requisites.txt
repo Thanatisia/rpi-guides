@@ -1,0 +1,12 @@
+# Raspberry Pi Guides - Documentations
+
+File Sharing Server : Pre-Requisites
+
+## Table of Contents
+* Packages required
+
+## Packages required
+* ntfs-3g : For NTFS Filesystem support
+* samba : For Samba Filesystem Network File Sharing support
+* cifs-utils : For Mounting and Network File Sharing support
+

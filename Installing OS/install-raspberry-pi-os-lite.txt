@@ -65,6 +65,25 @@ References:
 #=======================
 # 1. Post-Installations
 #=======================
+- Create a new user
+	- Create User
+		```
+		useradd -m -g sudo -G user -d /home/[your-name] username
+		```
+
+	- Set a Password
+		```
+		passwd [username]
+		```
+
+	- Test User
+		```
+		su - [username]
+		sudo whoami
+
+		# Result should be 'root'
+		```
+
 - Setup Localization
 	- Keyboard
 		```

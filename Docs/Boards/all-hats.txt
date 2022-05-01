@@ -1,0 +1,6 @@
+# Raspberry Pi Docs - All Hats
+
+Geekworm
+	X820 v2.0 : Raspberry Pi 3 | USB 3.0 + SATA HDD/SSD Expansion Board
+	X825 v3.0 : Raspberry Pi 4 | SATA HDD/SSD Expansion Board
+

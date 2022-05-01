@@ -1,0 +1,7 @@
+# Raspberry Pi Boards Masterlist
+
+```
+Component-category | Model | Compatibility | Description | 
+```
+Expansion Board | X820 | Raspberry Pi 3 | USB 3.0 + SATA HDD/SSD | 
+Expansion Board | X825 | Raspberry Pi 4 | SATA HDD/SSD

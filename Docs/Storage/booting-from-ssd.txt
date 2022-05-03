@@ -1,0 +1,77 @@
+# Raspberry Pi - Booting from SSD
+
+## Table of Contents
+- Files
+- Setup
+- Models
+	- Raspberry Pi 3
+	- Raspberry Pi 4
+- Remarks
+- Resources
+- References
+
+## Files
+/boot/config.txt : The Raspberry Pi bootloader config files
+
+## Setup
+
+### Pre-Requisites
+
+- Copy your current operating system with rpi-clone
+	```console
+	sudo rpi-clone [clone_destination_device_label (sdX only)]
+	```
+
+## Models
+
+### Raspberry Pi 3
+
+- To Enable Boot from USB/Change boot order
+	- Append to Raspberry Pi Bootloader Config File
+		```
+		# Edit file : [/boot/config.txt]
+		# Type in the following lines
+		program_usb_boot_mode=1		# Set USB Boot order
+		program_usb_boot_timeout=1	# Set Timeout/duration to check for a bootable OS
+		```
+
+- To Disable Boot from USB/Change boot order
+	- Append to Raspberry Pi Bootloader Config File
+		```
+		# Edit file : [/boot/config.txt]
+		# Type in the following lines
+		program_usb_boot_mode=0		# Set USB Boot order
+		program_usb_boot_timeout=0	# Set Timeout/duration to check for a bootable OS
+		```
+
+- Restart/Shutdown your Raspberry Pi
+	```console
+	sudo shutdown now
+	```
+
+### Raspberry Pi 4
+
+- To Enable Boot from USB/Change Boot Order
+	- Enter command [sudo raspi-config]
+		```console
+		sudo raspi-config
+		
+		# Select '6. Advanced Options'
+			# Select 'A6. Boot Order'
+				# Select 'B2. USB Boot'
+		```
+
+- To Enable Boot from USB/Change Boot Order
+	- Enter command [sudo raspi-config]
+		```console
+		sudo raspi-config
+		
+		# Select '6. Advanced Options'
+			# Select 'A6. Boot Order'
+				# Select 'B1. SD Card'
+		```
+
+- Restart/Shutdown your Raspberry Pi
+	```console
+	sudo shutdown now
+	```

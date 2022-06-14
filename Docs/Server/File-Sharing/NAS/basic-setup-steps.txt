@@ -1,0 +1,72 @@
+# NAS (Network File Sharing) Server / Shared Drive
+
+NAS Guide : Basic/Primary Filesystem Setup for sharing
+
+## Table of Contents
+- Setup
+	- Create Disk Label
+	- Format Filesystem
+
+## Setup
+
+### Create Disk Label
+
+sudo parted [device_name] mklabel {disk_label}
+
+### Create new partition
+
+sudo parted [device_name] mkpart {partition_type} {filesystem_type} {start_size} {end_size}
+
+### Format Filesystem
+
+```
+Filesystems:
+	fat
+		-F16
+		-F32
+	ext4
+```
+sudo mkfs.{filesystem} -F{FAT_options} [device_name]
+
+### Make Mount Directories
+
+```console
+sudo mkdir -p [mount_directory]
+```
+
+### Set Permissions to Directories
+
+- Permissions
+	777 : Read, Write, Execute
+
+```console
+sudo chmod 777 [mount_directory]
+```
+
+### Mount Filesystem to Directories
+
+```console
+sudo mount [device_name] [mount_directory]
+```
+
+### Edit your NAS sharing configs
+
+- Samba
+	- Edit /etc/samba/smb.conf
+		```console
+		$EDITOR /etc/samba/smb.conf
+		```
+
+	- Restart Samba
+		```console
+		sudo systemctl restart smbd
+		```
+
+### (OPTIONAL) Add devices UUID to /etc/fstab
+
+- Get UUID
+	- Use Blkid
+		```console
+		sudo blkid | grep [device_name] | cut -d ':' -f2 | cut -d ' ' -f2 | sudo tee -a /etc/fstab
+		```
+
